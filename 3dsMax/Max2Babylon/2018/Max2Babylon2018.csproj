@@ -41,26 +41,6 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MAX2018</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\</OutputPath>
-    <DefineConstants>TRACE;MAX2018</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autodesk.Max, Version=20.0.966.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -353,14 +333,11 @@
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
-if not exist "$(SolutionDir)assemblies\2018" mkdir "$(SolutionDir)assemblies\2018"
-del "$(SolutionDir)assemblies\2018\*.dll"
-copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2018\"
-if exist "C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\" copy "$(SolutionDir)assemblies\2018\*.dll" "C:\Program Files\Autodesk\3ds Max 2018\bin\assemblies\"
-if exist "D:\Programmes\Autodesk\3ds Max 2018\bin\assemblies\" copy "$(SolutionDir)assemblies\2018\*.dll" "D:\Programmes\Autodesk\3ds Max 2018\bin\assemblies\"</PostBuildEvent>
+    <PostBuildEvent>mkdir -p $(SolutionDir)assemblies\2018
+rm -f $(SolutionDir)assemblies\2018\*.dll
+cp $(TargetDir)*.dll $(SolutionDir)assemblies\2018\</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

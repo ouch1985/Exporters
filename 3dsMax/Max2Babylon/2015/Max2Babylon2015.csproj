@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F49C726-A1F8-40D4-859F-1355949612DC}</ProjectGuid>
+    <ProjectGuid>{DD7C931A-8FAF-4318-BB74-71DC858CC400}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Max2Babylon</RootNamespace>
     <AssemblyName>Max2Babylon</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SccProjectName>SAK</SccProjectName>
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MAX2019</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MAX2015</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -35,36 +35,16 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;MAX2019</DefineConstants>
+    <DefineConstants>TRACE;MAX2015</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MAX2019</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\</OutputPath>
-    <DefineConstants>TRACE;MAX2019</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autodesk.Max, Version=21.1.1.1320, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="Autodesk.Max, Version=17.0.630.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Refs\Autodesk.Max.dll</HintPath>
+      <HintPath>..\..\..\..\..\Repos\Babylon.js\Exporters\3ds Max\Max2Babylon\2015\Refs\Autodesk.Max.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GDImageLibrary">
@@ -296,6 +276,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Refs\Autodesk.Max.dll" />
+    <None Include="Resources\Logo_Exporter_v4.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="..\Forms\AnimationForm.resx">
       <Link>Forms\AnimationForm.resx</Link>
       <DependentUpon>AnimationForm.cs</DependentUpon>
@@ -343,24 +327,16 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Content Include="Refs\Autodesk.Max.dll" />
-    <None Include="Resources\Logo_Exporter_v4.jpg" />
-  </ItemGroup>
   <Import Project="..\..\..\SharedProjects\BabylonExport.Entities\BabylonExport.Entities.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\BabylonFileConverter\BabylonFileConverter.projitems" Label="Shared" />
   <Import Project="..\..\..\SharedProjects\GltfExport.Entities\GltfExport.Entities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)assemblies" mkdir "$(SolutionDir)assemblies"
-if not exist "$(SolutionDir)assemblies\2019" mkdir "$(SolutionDir)assemblies\2019"
-del "$(SolutionDir)assemblies\2019\*.dll"
-copy "$(TargetDir)*.dll" "$(SolutionDir)assemblies\2019\"
-if exist "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "C:\Program Files\Autodesk\3ds Max 2019\bin\assemblies\"
-if exist "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\" copy "$(SolutionDir)assemblies\2019\*.dll" "D:\Programmes\Autodesk\3ds Max 2019\bin\assemblies\"</PostBuildEvent>
+    <PostBuildEvent>mkdir -p $(SolutionDir)assemblies\2015
+rm -f $(SolutionDir)assemblies\2015\*.dll
+cp $(TargetDir)*.dll $(SolutionDir)assemblies\2015\</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
