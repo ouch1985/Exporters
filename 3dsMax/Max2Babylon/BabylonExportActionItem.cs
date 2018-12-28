@@ -5,12 +5,12 @@ namespace Max2Babylon
 {
     public class BabylonExportActionItem : ActionItem
     {
-        private ExporterForm form;
+        private CYExporterForm form;
 
         public override bool ExecuteAction()
         {
             if (form == null || form.IsDisposed)
-                form = new ExporterForm(this);
+                form = new CYExporterForm(this);
             form.Show();
             form.BringToFront();
             form.WindowState = FormWindowState.Normal;
@@ -40,7 +40,7 @@ namespace Max2Babylon
 
         public override string MenuText
         {
-            get { return "&Babylon File Exporter..."; }
+            get { return "&导出"; }
         }
 
         public override string DescriptionText

@@ -110,7 +110,7 @@ namespace Max2Babylon
 
             // Main menu
             menu = Loader.Global.IMenu;
-            menu.Title = "Babylon";
+            menu.Title = "传瑜";
             menuManager.RegisterMenu(menu, 0);
 
             // Launch option

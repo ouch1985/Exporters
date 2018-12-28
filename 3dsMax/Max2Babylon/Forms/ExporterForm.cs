@@ -13,6 +13,7 @@ namespace Max2Babylon
         private readonly BabylonExportActionItem babylonExportAction;
         private BabylonExporter exporter;
         private bool gltfPipelineInstalled = true;  // true if the gltf-pipeline is installed and runnable.
+        private delegate void FlushClient();
 
         TreeNode currentNode;
         int currentRank;
