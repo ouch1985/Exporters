@@ -52,7 +52,7 @@ namespace Max2Babylon
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
 
             {
-                webBrowser.Document.InvokeScript("updateFile", new String[] { saveFileDialog.FileName });
+                ShowMessage("updateFile", saveFileDialog.FileName);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Max2Babylon
         {
             if (ing)
             {
-                webBrowser.Document.InvokeScript("done", new String[] { "0", "进行中,请勿重复点击"});
+                ShowMessage("error", "进行中,请勿重复点击");
                 return;
             }
             ing = true;
@@ -82,7 +82,7 @@ namespace Max2Babylon
             }
             else
             {
-                webBrowser.Document.InvokeScript(type, new String[] { message });
+                webBrowser.Document.InvokeScript("$cy", new String[] { type, message });
             }
         }
 
@@ -104,7 +104,6 @@ namespace Max2Babylon
 
                 exporter.OnImportProgressChanged += progress =>
                 {
-                    //webBrowser.Document.InvokeScript("progress", new String[] { progress.ToString() });
                     ShowMessage("progress", progress.ToString());
                 };
 
@@ -116,7 +115,7 @@ namespace Max2Babylon
 
                 exporter.OnError += (error, rank) =>
                 {
-                    ShowMessage("warning", error);
+                    ShowMessage("error", error);
                 };
 
                 exporter.OnMessage += (message, color, rank, emphasis) =>
@@ -139,7 +138,7 @@ namespace Max2Babylon
                 ShowMessage("done", success ? "1" : "0");
                 if(err != null)
                 {
-                    ShowMessage("log", err);
+                    ShowMessage("error", err);
                 }
 
             } catch (Exception e) { 
