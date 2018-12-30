@@ -99,7 +99,7 @@ namespace Max2Babylon
             IIMenuManager menuManager = Loader.Core.MenuManager;
 
             // Set up menu
-            menu = menuManager.FindMenu("Babylon");
+            menu = menuManager.FindMenu("CY");
 
             if (menu != null)
             {
@@ -110,7 +110,7 @@ namespace Max2Babylon
 
             // Main menu
             menu = Loader.Global.IMenu;
-            menu.Title = "传瑜";
+            menu.Title = "CY";
             menuManager.RegisterMenu(menu, 0);
 
             // Launch option
@@ -123,43 +123,6 @@ namespace Max2Babylon
             menuItem.SubMenu = menu;
 
             menuManager.MainMenuBar.AddItem(menuItem, -1);
-
-            // Quad
-            var rootQuadMenu = menuManager.GetViewportRightClickMenu(RightClickContext.NonePressed);
-            var quadMenu = rootQuadMenu.GetMenu(0);
-
-            menu = menuManager.FindMenu("Babylon...");
-
-            if (menu != null)
-            {
-                menuManager.UnRegisterMenu(menu);
-                Loader.Global.ReleaseIMenu(menu);
-                menu = null;
-            }
-
-            menu = Loader.Global.IMenu;
-            menu.Title = "Babylon...";
-            menuManager.RegisterMenu(menu, 0);
-
-            menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Properties";
-            menuItemBabylon.ActionItem = actionTable[1];
-            menu.AddItem(menuItemBabylon, -1);
-
-            menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Animation Groups";
-            menuItemBabylon.ActionItem = actionTable[2];
-            menu.AddItem(menuItemBabylon, -1);
-
-            menuItemBabylon = Loader.Global.IMenuItem;
-            menuItemBabylon.Title = "Babylon Actions Builder";
-            menuItemBabylon.ActionItem = actionTable[3];
-            menu.AddItem(menuItemBabylon, -1);
-
-            menuItem = Loader.Global.IMenuItem;
-            menuItem.SubMenu = menu;
-
-            quadMenu.AddItem(menuItem, -1);
 
             Loader.Global.COREInterface.MenuManager.UpdateMenuBar();
         }

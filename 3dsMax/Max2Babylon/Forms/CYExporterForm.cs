@@ -31,8 +31,8 @@ namespace Max2Babylon
             webBrowser = new WebBrowser();
             this.Controls.Add(webBrowser);
 
-            //webBrowser.Navigate("http://129.204.129.112:9999/max.html?t=" + new DateTime().Millisecond);
-            webBrowser.Navigate("http://192.168.31.31:8080/max.html?t=" + new DateTime().Millisecond);
+            webBrowser.Navigate("http://129.204.129.112:9999/max.html?t=" + new DateTime().Millisecond);
+            //webBrowser.Navigate("http://192.168.31.31:8080/max.html?t=" + new DateTime().Millisecond);
             webBrowser.Dock = DockStyle.Fill;
 
             this.Load += new EventHandler(Form_Load);

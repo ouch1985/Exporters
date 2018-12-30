@@ -346,7 +346,8 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir -p $(SolutionDir)assemblies\2019
 rm -f $(SolutionDir)assemblies\2019\*.dll
-cp $(TargetDir)*.dll $(SolutionDir)assemblies\2019\</PostBuildEvent>
+cp $(TargetDir)*.dll $(SolutionDir)assemblies\2019\
+mv $(SolutionDir)assemblies\2019\Max2Babylon.dll $(SolutionDir)assemblies\2019\cy.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
