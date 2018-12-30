@@ -21,16 +21,17 @@ namespace Max2Babylon
         public CYExporterForm(BabylonExportActionItem babylonExportAction)
         {
             this.Text = "模型导出";
-            this.Size = new System.Drawing.Size(Screen.PrimaryScreen.Bounds.Width / 4, Screen.PrimaryScreen.Bounds.Height / 4);
-            this.MinimumSize = new System.Drawing.Size(Screen.PrimaryScreen.Bounds.Width/4, Screen.PrimaryScreen.Bounds.Height/4);
+            this.Size = new System.Drawing.Size(600, 600);
+            this.MinimumSize = new System.Drawing.Size(600, 600);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.saveFileDialog.DefaultExt = "glb";
-            this.saveFileDialog.Filter = "glb files|*.glb";
+            this.saveFileDialog.DefaultExt = "cy";
+            this.saveFileDialog.Filter = "cy files|*.cy";
 
             webBrowser = new WebBrowser();
             this.Controls.Add(webBrowser);
 
+            //webBrowser.Navigate("http://129.204.129.112:9999/max.html?t=" + new DateTime().Millisecond);
             webBrowser.Navigate("http://192.168.31.31:8080/max.html?t=" + new DateTime().Millisecond);
             webBrowser.Dock = DockStyle.Fill;
 
@@ -47,8 +48,9 @@ namespace Max2Babylon
             webBrowser.ObjectForScripting = this;
         }
 
-        public void SelectFile() {
+        public void SelectFile(String format) {
             if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+
             {
                 webBrowser.Document.InvokeScript("updateFile", new String[] { saveFileDialog.FileName });
             }
@@ -96,7 +98,6 @@ namespace Max2Babylon
                 JsonSerializer serializer = new JsonSerializer();
                 ExportParameters exportParameters = (ExportParameters)serializer.Deserialize(new JsonTextReader(sr), typeof(ExportParameters));
 
-                //webBrowser.Document.InvokeScript("log", new String[] { "开始..." });
                 ShowMessage("log", "开始...");
 
                 exporter = new BabylonExporter();
@@ -107,12 +108,21 @@ namespace Max2Babylon
                     ShowMessage("progress", progress.ToString());
                 };
 
-                //ExportParameters exportParameters = new ExportParameters
-                //{
-                //    outputPath = message,
-                //    outputFormat = "glb",
-                //    exportTangents = false
-                //};
+                exporter.OnWarning += (warning, rank) =>
+                {
+
+                    ShowMessage("warning", warning);
+                };
+
+                exporter.OnError += (error, rank) =>
+                {
+                    ShowMessage("warning", error);
+                };
+
+                exporter.OnMessage += (message, color, rank, emphasis) =>
+                {
+                    ShowMessage("log", message);
+                };
 
                 exporter.callerForm = this;
 
@@ -126,7 +136,6 @@ namespace Max2Babylon
 
 
             try {
-                //webBrowser.Document.InvokeScript("done", new String[] { success ? "1" : "0", err});
                 ShowMessage("done", success ? "1" : "0");
                 if(err != null)
                 {

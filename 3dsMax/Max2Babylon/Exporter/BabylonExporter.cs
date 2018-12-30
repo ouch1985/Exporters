@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Max2Babylon
 {
@@ -411,129 +413,19 @@ namespace Max2Babylon
                 }
             }
 
-            // Animation group
-            if (isBabylonExported)
-            {
-                RaiseMessage("Export animation groups");
-                // add animation groups to the scene
-                babylonScene.animationGroups = ExportAnimationGroups(babylonScene);
-
-                // if there is animationGroup, then remove animations from nodes
-                if (babylonScene.animationGroups.Count > 0)
-                {
-                    foreach (BabylonNode node in babylonScene.MeshesList)
-                    {
-                        node.animations = null;
-                    }
-                    foreach (BabylonNode node in babylonScene.LightsList)
-                    {
-                        node.animations = null;
-                    }
-                    foreach (BabylonNode node in babylonScene.CamerasList)
-                    {
-                        node.animations = null;
-                    }
-                    foreach (BabylonSkeleton skel in babylonScene.SkeletonsList)
-                    {
-                        foreach (BabylonBone bone in skel.bones)
-                        {
-                            bone.animation = null;
-                        }
-                    }
-                }
-            }
-
 
             // Output
             babylonScene.Prepare(false, false);
-            if (isBabylonExported)
+            ExportGltf(babylonScene, tempOutputDirectory, outputFileName, outputFormat == "glb");
+            var zipFile = Path.ChangeExtension(exportParameters.outputPath, "cy");
+            var zip = new FastZip
             {
-                RaiseMessage("Saving to output file");
-
-                var outputFile = Path.Combine(outputBabylonDirectory, outputFileName);
-
-                var jsonSerializer = JsonSerializer.Create(new JsonSerializerSettings());
-                var sb = new StringBuilder();
-                var sw = new StringWriter(sb, CultureInfo.InvariantCulture);
-                using (var jsonWriter = new JsonTextWriterOptimized(sw))
-                {
-                    jsonWriter.Formatting = Formatting.None;
-                    jsonSerializer.Serialize(jsonWriter, babylonScene);
-                }
-                File.WriteAllText(outputFile, sb.ToString());
-
-                if (exportParameters.generateManifest)
-                {
-                    File.WriteAllText(outputFile + ".manifest",
-                        "{\r\n\"version\" : 1,\r\n\"enableSceneOffline\" : true,\r\n\"enableTexturesOffline\" : true\r\n}");
-                }
-
-                // Binary
-                if (outputFormat == "binary babylon")
-                {
-                    RaiseMessage("Generating binary files");
-                    BabylonFileConverter.BinaryConverter.Convert(outputFile, outputBabylonDirectory + "\\Binary",
-                        message => RaiseMessage(message, 1),
-                        error => RaiseError(error, 1));
-                }
-            }
+                Password = "cyplugin!@#$"
+            };
+            zip.CreateZip(zipFile, tempOutputDirectory, false, null);
 
             ReportProgressChanged(100);
 
-            // Export glTF
-            if (isGltfExported)
-            {
-                bool generateBinary = outputFormat == "glb";
-                ExportGltf(babylonScene, tempOutputDirectory, outputFileName, generateBinary);
-            }
-            // Move files to output directory
-            var filePaths = Directory.GetFiles(tempOutputDirectory);
-            if (outputFormat == "binary babylon")
-            {
-                var tempBinaryOutputDirectory = Path.Combine(tempOutputDirectory, "Binary");
-                var binaryFilePaths = Directory.GetFiles(tempBinaryOutputDirectory);
-                foreach(var filePath in binaryFilePaths)
-                {
-                    if (filePath.EndsWith(".binary.babylon"))
-                    {
-                        var file = Path.GetFileName(filePath);
-                        var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
-                        var outputFile = Path.Combine(outputDirectory, file);
-                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
-                    }
-                    else if (filePath.EndsWith(".babylonbinarymeshdata"))
-                    {
-                        var file = Path.GetFileName(filePath);
-                        var tempFilePath = Path.Combine(tempBinaryOutputDirectory, file);
-                        var outputFile = Path.Combine(outputDirectory, file);
-                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
-                    }
-                }
-            }
-            if (outputFormat == "glb")
-            {
-                foreach (var file_path in filePaths)
-                {
-                    if (Path.GetExtension(file_path) == ".glb")
-                    {
-                        var file = Path.GetFileName(file_path);
-                        var tempFilePath = Path.Combine(tempOutputDirectory, file);
-                        var outputFile = Path.Combine(outputDirectory, file);
-                        moveFileToOutputDirectory(tempFilePath, outputFile, exportParameters);
-                        break;
-                    }   
-                }
-            }
-            else
-            { 
-                foreach (var filePath in filePaths)
-                {
-                    var file = Path.GetFileName(filePath);
-                    var outputPath = Path.Combine(outputDirectory, file);
-                    var tempFilePath = Path.Combine(tempOutputDirectory, file);
-                    moveFileToOutputDirectory(tempFilePath, outputPath, exportParameters);
-                }
-            }
             Directory.Delete(tempOutputDirectory, true);
             watch.Stop();
             RaiseMessage(string.Format("Exportation done in {0:0.00}s", watch.ElapsedMilliseconds / 1000.0), Color.Blue);

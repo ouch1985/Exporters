@@ -77,6 +77,9 @@
     <Reference Include="TQ.Texture">
       <HintPath>..\..\Refs\TQ.Texture.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\BabylonActionCallback.cs">
@@ -292,9 +295,17 @@
       <Link>Forms\CameraPropertiesForm.resx</Link>
       <DependentUpon>CameraPropertiesForm.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="..\Forms\CYExporterForm.cs">
+      <Link>Forms\CYExporterForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="..\Forms\ExporterForm.resx">
       <Link>Forms\ExporterForm.resx</Link>
       <DependentUpon>ExporterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Forms\CYExporterForm.resx">
+      <Link>Forms\CYExporterForm.resx</Link>
+      <DependentUpon>CYExporterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Forms\LightPropertiesForm.resx">
       <Link>Forms\LightPropertiesForm.resx</Link>
