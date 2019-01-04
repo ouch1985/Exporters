@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace BabylonExport.Entities
 {
@@ -181,6 +184,22 @@ namespace BabylonExport.Entities
             samplingMode = original.samplingMode;
             originalPath = original.originalPath;
             bitmap = original.bitmap;
+
+           
+        }
+
+        private string MD5Encrypt(string input)
+        {
+
+            MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] data = md5Hasher.ComputeHash(inputBytes);
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
     }
 }

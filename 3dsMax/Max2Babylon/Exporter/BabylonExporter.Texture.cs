@@ -5,6 +5,8 @@ using Autodesk.Max;
 using BabylonExport.Entities;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace Max2Babylon
 {
@@ -227,7 +229,7 @@ namespace Max2Babylon
             { 
                 var babylonTexture = new BabylonTexture(textureID)
                 {
-                    name = nameText // TODO - unsafe name, may conflict with another texture name
+                    name = MD5Encrypt(nameText) // TODO - unsafe name, may conflict with another texture name
                 };
 
                 // Level
@@ -360,7 +362,7 @@ namespace Max2Babylon
             else { 
                 var babylonTexture = new BabylonTexture(textureID)
                 {
-                    name = (ambientOcclusionTexMap != null ? Path.GetFileNameWithoutExtension(ambientOcclusionTexture.Map.FileName) : "") +
+                    name = MD5Encrypt(ambientOcclusionTexMap != null ? Path.GetFileNameWithoutExtension(ambientOcclusionTexture.Map.FileName) : "") +
                            (roughnessTexMap != null ? Path.GetFileNameWithoutExtension(roughnessTexture.Map.FileName) : ("" + (int)(roughness * 255))) +
                            (metallicTexMap != null ? Path.GetFileNameWithoutExtension(metallicTexture.Map.FileName) : ("" + (int)(metallic * 255))) + ".jpg" // TODO - unsafe name, may conflict with another texture name
                 };
@@ -465,7 +467,7 @@ namespace Max2Babylon
             { 
                 var babylonTexture = new BabylonTexture(textureID)
                 {
-                    name = fileName
+                    name = MD5Encrypt(fileName)
                 };
 
                 // Copy texture to output
@@ -491,6 +493,20 @@ namespace Max2Babylon
 
                 return babylonTexture;
             }
+        }
+
+        private string MD5Encrypt(string input)
+        {
+
+            MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] data = md5Hasher.ComputeHash(inputBytes);
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         // -------------------------
@@ -531,7 +547,7 @@ namespace Max2Babylon
             { 
                 var babylonTexture = new BabylonTexture(textureID)
                 {
-                    name = Path.GetFileNameWithoutExtension(texture.MapName) + "." + validImageFormat
+                    name = MD5Encrypt(Path.GetFileNameWithoutExtension(texture.MapName)) + "." + validImageFormat
                 };
                 RaiseMessage($"texture id = {babylonTexture.Id}", 2);
 
@@ -1121,7 +1137,7 @@ namespace Max2Babylon
                 {
                     // Create an Encoder object based on the GUID for the Quality parameter category
                     EncoderParameters encoderParameters = new EncoderParameters(1);
-                    EncoderParameter encoderQualityParameter = new EncoderParameter(Encoder.Quality, long.Parse(exportParameters.txtQuality));
+                    EncoderParameter encoderQualityParameter = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, long.Parse(exportParameters.txtQuality));
                     encoderParameters.Param[0] = encoderQualityParameter;
 
                     bitmap.Save(fs, encoder, encoderParameters);

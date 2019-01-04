@@ -10,6 +10,7 @@ using System.Text;
 using Color = System.Drawing.Color;
 using System.Linq;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace Max2Babylon
 {
@@ -22,6 +23,7 @@ namespace Max2Babylon
         // from BabylonNode to GLTFNode
         Dictionary<BabylonNode, GLTFNode> nodeToGltfNodeMap;
         Dictionary<BabylonBone, GLTFNode> boneToGltfNodeMap;
+        Dictionary<string, GLTFAccessor> accessors = new Dictionary<string, GLTFAccessor>();
 
         public void ExportGltf(BabylonScene babylonScene, string outputDirectory, string outputFileName, bool generateBinary)
         {
@@ -123,11 +125,26 @@ namespace Max2Babylon
                         // Chunk must be padded with trailing zeros (0x00) to satisfy alignment requirements
                         accessor.bytesList = new List<byte>(padChunk(accessor.bytesList.ToArray(), 4, 0x00));
 
-                        // Update byte properties
-                        accessor.byteOffset = bufferView.byteLength;
-                        bufferView.byteLength += accessor.bytesList.Count;
-                        // Merge bytes
-                        bufferView.bytesList.AddRange(accessor.bytesList);
+                        string hashcode = MD5Encrypt(accessor.bytesList);
+                        //int hashcode = accessor.bytesList.GetHashCode();
+                        if (accessors.ContainsKey(hashcode))
+                        {
+                            GLTFAccessor thesameAcc = accessors[hashcode];
+                            accessor.byteOffset = thesameAcc.byteOffset;
+                            accessor.count = thesameAcc.count;
+                            accessor.bufferView = thesameAcc.bufferView;
+                            RaiseWarning("相同的数据," + accessor.count + "b");
+
+                        }
+                        else
+                        {
+                            // Update byte properties
+                            accessor.byteOffset = bufferView.byteLength;
+                            bufferView.byteLength += accessor.bytesList.Count;
+                            // Merge bytes
+                            bufferView.bytesList.AddRange(accessor.bytesList);
+                            accessors[hashcode] = accessor;
+                        }
                     });
                     // Update byte properties
                     bufferView.byteOffset = buffer.byteLength;
@@ -263,6 +280,19 @@ namespace Max2Babylon
             }
 
             ReportProgressChanged(100);
+        }
+
+        private string MD5Encrypt(List<byte> bs)
+        {
+
+            MD5CryptoServiceProvider md5Hasher = new MD5CryptoServiceProvider();
+            byte[] data = md5Hasher.ComputeHash(bs.ToArray());
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         private List<BabylonNode> initBabylonNodes(BabylonScene babylonScene)
