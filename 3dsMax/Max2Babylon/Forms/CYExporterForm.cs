@@ -32,8 +32,9 @@ namespace Max2Babylon
             webBrowser = new WebBrowser();
             this.Controls.Add(webBrowser);
 
+            //webBrowser.Navigate("https://yuojiu.com/p3dsmax.html?t=" + new DateTime().Millisecond);
+            //webBrowser.Navigate("https://test.jiuyuo.com/p3dsmax.html?t=" + new DateTime().Millisecond);
             webBrowser.Navigate("http://192.168.1.111:8080/p3dsmax.html?t=" + new DateTime().Millisecond);
-            //webBrowser.Navigate("http://129.204.129.112:9999/max.html?t=" + new DateTime().Millisecond);
             //webBrowser.Navigate("http://192.168.31.31:8080/max.html?t=" + new DateTime().Millisecond);
             webBrowser.Dock = DockStyle.Fill;
 
@@ -72,6 +73,8 @@ namespace Max2Babylon
             }
             ing = true;
             ouputfile = System.IO.Path.GetTempFileName().Replace(".tmp", ".cy");
+            ouputfile = Path.GetDirectoryName(ouputfile);
+            ouputfile = Path.Combine(ouputfile, "model.cy");
 
             expParams = message;
             Thread t = new Thread(new ThreadStart(DoExport));
